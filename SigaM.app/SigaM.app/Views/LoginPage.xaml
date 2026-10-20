@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SigaM.app.Views.LoginPage"
+             NavigationPage.HasNavigationBar="False"
+             BackgroundColor="#f4f6f9">
+
+    <Grid>
+        <!-- Botão escondido para mostrar indicador de carregamento -->
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" 
+                           Color="#1a73e8" VerticalOptions="Center" HorizontalOptions="Center" />
+
+        <ScrollView>
+            <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+
+                <!-- Logo do SIGA-M -->
+                <!-- Certifique-se de que a imagem está em Resources/Images/logo_sigam.png -->
+                <Image Source="logo_sigam.png" HeightRequest="180" Aspect="AspectFit" HorizontalOptions="Center" Margin="0,0,0,20"/>
+
+                <Label Text="Acesse sua conta" FontSize="22" FontAttributes="Bold" TextColor="#333" HorizontalOptions="Center" Margin="0,0,0,10"/>
+
+                <!-- Campo Prontuário -->
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,5">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Label Text="👤" FontSize="20" VerticalOptions="Center" Margin="0,0,10,0"/>
+                        <Entry Grid.Column="1" Text="{Binding Prontuario}" Placeholder="Digite seu prontuário" 
+                               TextColor="#333" PlaceholderColor="#999" Keyboard="Text"/>
+                    </Grid>
+                </Border>
+
+                <!-- Campo Senha -->
+                <Border BackgroundColor="White" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,5">
+                    <Grid ColumnDefinitions="Auto,*">
+                        <Label Text="🔒" FontSize="20" VerticalOptions="Center" Margin="0,0,10,0"/>
+                        <Entry Grid.Column="1" Text="{Binding Senha}" Placeholder="Digite sua senha" 
+                               IsPassword="True" TextColor="#333" PlaceholderColor="#999"/>
+                    </Grid>
+                </Border>
+
+                <!-- Botão de Entrar -->
+                <Button Text="Entrar" Command="{Binding EntrarCommand}" 
+                        BackgroundColor="#1a73e8" TextColor="White" 
+                        FontAttributes="Bold" FontSize="16" 
+                        CornerRadius="10" HeightRequest="50" Margin="0,10,0,0"/>
+
+                <!-- Mensagem de Erro -->
+                <Label Text="{Binding MensagemErro}" TextColor="#dc3545" FontSize="13" HorizontalOptions="Center" IsVisible="{Binding TemErro}"/>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

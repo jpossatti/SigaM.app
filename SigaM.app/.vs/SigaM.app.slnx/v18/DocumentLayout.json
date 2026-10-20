@@ -3,20 +3,44 @@
   "WorkspaceRootPath": "D:\\Dev\\SigaM.app\\SigaM.app\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{93AF40BB-88B8-4F46-A1D0-A37314AB81FA}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\views\\estacoespage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{93AF40BB-88B8-4F46-A1D0-A37314AB81FA}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\views\\estacoespage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\views\\estacoespage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\views\\estacoespage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{93AF40BB-88B8-4F46-A1D0-A37314AB81FA}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\viewmodels\\estacoesviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{93AF40BB-88B8-4F46-A1D0-A37314AB81FA}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\viewmodels\\estacoesviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\viewmodels\\estacoesviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\viewmodels\\estacoesviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{93AF40BB-88B8-4F46-A1D0-A37314AB81FA}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\models\\localidade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{93AF40BB-88B8-4F46-A1D0-A37314AB81FA}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\models\\localidade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{93AF40BB-88B8-4F46-A1D0-A37314AB81FA}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\models\\estacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{93AF40BB-88B8-4F46-A1D0-A37314AB81FA}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\models\\estacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\helpers\\globals.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\helpers\\globals.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\views\\loginpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\views\\loginpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\views\\loginpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\views\\loginpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\models\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\models\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\models\\localidade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\models\\localidade.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\models\\estacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\models\\estacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,8 +50,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Usuario.cs",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Models\\Usuario.cs",
+              "RelativeDocumentMoniker": "SigaM.app\\Models\\Usuario.cs",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Models\\Usuario.cs",
+              "RelativeToolTip": "SigaM.app\\Models\\Usuario.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-20T20:26:39.081Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -36,9 +73,35 @@
               "RelativeDocumentMoniker": "SigaM.app\\Views\\EstacoesPage.xaml",
               "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Views\\EstacoesPage.xaml",
               "RelativeToolTip": "SigaM.app\\Views\\EstacoesPage.xaml",
-              "ViewState": "AgIAAEcAAAAAAAAAAAAUwFgAAAAOAAAAAAAAAA==",
+              "ViewState": "AgIAAE0AAAAAAAAAAAAUwF4AAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2026-10-20T20:15:22.14Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "LoginViewModel.cs",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\ViewModels\\LoginViewModel.cs",
+              "RelativeDocumentMoniker": "SigaM.app\\ViewModels\\LoginViewModel.cs",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\ViewModels\\LoginViewModel.cs",
+              "RelativeToolTip": "SigaM.app\\ViewModels\\LoginViewModel.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAcwEcAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-20T20:28:24.321Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Globals.cs",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Helpers\\Globals.cs",
+              "RelativeDocumentMoniker": "SigaM.app\\Helpers\\Globals.cs",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Helpers\\Globals.cs",
+              "RelativeToolTip": "SigaM.app\\Helpers\\Globals.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-20T20:39:10.971Z",
               "EditorCaption": ""
             },
             {
@@ -49,14 +112,53 @@
               "RelativeDocumentMoniker": "SigaM.app\\ViewModels\\EstacoesViewModel.cs",
               "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\ViewModels\\EstacoesViewModel.cs",
               "RelativeToolTip": "SigaM.app\\ViewModels\\EstacoesViewModel.cs",
-              "ViewState": "AgIAAJ0AAAAAAAAAAAAuwLgAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAALkAAAAAAAAAAAAgwMsAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-20T20:14:53.568Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
+              "Title": "LoginPage.xaml",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Views\\LoginPage.xaml",
+              "RelativeDocumentMoniker": "SigaM.app\\Views\\LoginPage.xaml",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Views\\LoginPage.xaml",
+              "RelativeToolTip": "SigaM.app\\Views\\LoginPage.xaml",
+              "ViewState": "AgIAABgAAAAAAAAAAAAuwDMAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-10-20T20:27:35.973Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "LoginPage.xaml.cs",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Views\\LoginPage.xaml.cs",
+              "RelativeDocumentMoniker": "SigaM.app\\Views\\LoginPage.xaml.cs",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Views\\LoginPage.xaml.cs",
+              "RelativeToolTip": "SigaM.app\\Views\\LoginPage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-20T20:27:59.389Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\App.xaml.cs",
+              "RelativeDocumentMoniker": "SigaM.app\\App.xaml.cs",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\App.xaml.cs",
+              "RelativeToolTip": "SigaM.app\\App.xaml.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwA4AAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-20T20:29:08.387Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "Localidade.cs",
               "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Models\\Localidade.cs",
               "RelativeDocumentMoniker": "SigaM.app\\Models\\Localidade.cs",
@@ -64,12 +166,11 @@
               "RelativeToolTip": "SigaM.app\\Models\\Localidade.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-20T20:14:11.553Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-20T20:14:11.553Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 9,
               "Title": "Estacao.cs",
               "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Models\\Estacao.cs",
               "RelativeDocumentMoniker": "SigaM.app\\Models\\Estacao.cs",
@@ -77,8 +178,7 @@
               "RelativeToolTip": "SigaM.app\\Models\\Estacao.cs",
               "ViewState": "AgIAAAIAAAAAAAAAAAAuwB0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-20T20:13:40.872Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-20T20:13:40.872Z"
             }
           ]
         }

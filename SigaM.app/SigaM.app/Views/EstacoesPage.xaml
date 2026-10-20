@@ -5,7 +5,6 @@
              Title="Estações"
              BackgroundColor="#f4f6f9">
 
-    <!-- O Grid Principal abraça a página inteira -->
     <Grid>
 
         <!-- LAYOUT PRINCIPAL -->
@@ -13,7 +12,12 @@
 
             <!-- Botões do Topo -->
             <HorizontalStackLayout Grid.Row="0" Spacing="10" Margin="0,0,0,10">
-                <Button Text="➕ Nova Estação" Command="{Binding AbrirModalNovoCommand}" BackgroundColor="#198754" TextColor="White" CornerRadius="8"/>
+                <!-- Botão Nova Estação só aparece para Admin -->
+                <Button Text="➕ Nova Estação" 
+                        Command="{Binding AbrirModalNovoCommand}" 
+                        BackgroundColor="#198754" TextColor="White" CornerRadius="8"
+                        IsVisible="{Binding PodeEditar}" />
+
                 <Button Text="🔄 Atualizar" Command="{Binding CarregarEstacoesCommand}" BackgroundColor="#1a73e8" TextColor="White" CornerRadius="8"/>
             </HorizontalStackLayout>
 
@@ -30,8 +34,10 @@
                                     <Label Text="{Binding Observacao}" FontSize="12" TextColor="#999" />
                                 </VerticalStackLayout>
 
-                                <!-- Botões de Ação na linha -->
-                                <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                <!-- Botões de Ação (Editar / Excluir) - Ocultos para não-admin -->
+                                <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center"
+                                                       IsVisible="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.PodeEditar}">
+
                                     <Button Text="✏️" 
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AbrirModalEditarCommand}" 
                                             CommandParameter="{Binding .}"

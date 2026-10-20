@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using SigaM.app.Views;
 
 namespace SigaM.app
 {
@@ -11,7 +11,8 @@ namespace SigaM.app
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            // Inicia o app na tela de Login
+            return new Window(new NavigationPage(new LoginPage()));
         }
     }
 }

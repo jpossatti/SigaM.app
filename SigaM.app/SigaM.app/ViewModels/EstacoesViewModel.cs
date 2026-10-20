@@ -15,7 +15,10 @@ namespace SigaM.app.ViewModels
         public ObservableCollection<Estacao> Estacoes { get; set; } = new();
         public ObservableCollection<Localidade> LocalidadesDisponiveis { get; set; } = new();
 
-        // Propriedades do Formulário Modal
+        // --- CONTROLE DE PERMISSÃO ---
+        public bool PodeEditar => Globals.IsAdmin;
+
+        // --- PROPRIEDADES DO FORMULÁRIO MODAL ---
         private bool _isModalVisivel = false;
         public bool IsModalVisivel
         {
@@ -45,7 +48,7 @@ namespace SigaM.app.ViewModels
             set { _observacao = value; OnPropertyChanged(); }
         }
 
-        // Comandos
+        // --- COMANDOS ---
         public Command CarregarEstacoesCommand { get; }
         public Command AbrirModalNovoCommand { get; }
         public Command AbrirModalEditarCommand { get; }
@@ -79,7 +82,10 @@ namespace SigaM.app.ViewModels
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
                         Estacoes.Clear();
-                        if (lista != null) foreach (var item in lista) Estacoes.Add(item);
+                        if (lista != null)
+                        {
+                            foreach (var item in lista) Estacoes.Add(item);
+                        }
                     });
                 }
             }
@@ -100,7 +106,10 @@ namespace SigaM.app.ViewModels
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
                         LocalidadesDisponiveis.Clear();
-                        if (lista != null) foreach (var item in lista) LocalidadesDisponiveis.Add(item);
+                        if (lista != null)
+                        {
+                            foreach (var item in lista) LocalidadesDisponiveis.Add(item);
+                        }
                     });
                 }
             }
@@ -109,6 +118,8 @@ namespace SigaM.app.ViewModels
 
         private async Task AbrirModalNovo()
         {
+            if (!PodeEditar) return; // Dupla checagem
+
             await CarregarLocalidadesLivres();
             _estacaoIdAtual = 0;
             LocalidadeSelecionada = null;
@@ -117,11 +128,10 @@ namespace SigaM.app.ViewModels
             IsModalVisivel = true;
         }
 
-        private async Task AbrirModalEditar(Estacao est)
+        private async Task AbrirModalEditar(Estacao? est)
         {
-            if (est == null) return;
+            if (est == null || !PodeEditar) return;
 
-            // Carrega as localidades mas mantém a atual na lista
             await CarregarLocalidadesLivres();
             var locAtual = new Localidade { Id = est.LocalidadeId, Nome = est.Localidade };
             LocalidadesDisponiveis.Insert(0, locAtual);
@@ -135,9 +145,11 @@ namespace SigaM.app.ViewModels
 
         private async Task Salvar()
         {
+            if (!PodeEditar) return;
+
             if (LocalidadeSelecionada == null)
             {
-                await Application.Current!.MainPage!.DisplayAlert("Aviso", "Selecione uma localidade.", "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlert("Aviso", "Selecione uma localidade.", "OK");
                 return;
             }
 
@@ -148,7 +160,8 @@ namespace SigaM.app.ViewModels
                     id = _estacaoIdAtual,
                     localidade_id = LocalidadeSelecionada.Id,
                     ip_gerenciamento = IpGerenciamento,
-                    observacao = Observacao
+                    observacao = Observacao,
+                    usuario_prontuario = Globals.UsuarioLogado // ENVIA O USUÁRIO PARA A API
                 };
 
                 using var client = new HttpClient();
@@ -161,17 +174,23 @@ namespace SigaM.app.ViewModels
             catch (Exception ex) { Console.WriteLine($"Erro: {ex.Message}"); }
         }
 
-        private async Task Excluir(Estacao est)
+        private async Task Excluir(Estacao? est)
         {
-            if (est == null) return;
+            if (est == null || !PodeEditar) return;
 
-            bool confirm = await Application.Current!.MainPage!.DisplayAlert("Excluir", $"Deseja excluir a estação de {est.Localidade}?", "Sim", "Não");
+            bool confirm = await Application.Current!.Windows[0].Page!.DisplayAlert("Excluir", $"Deseja excluir a estação de {est.Localidade}?", "Sim", "Não");
             if (!confirm) return;
 
             try
             {
+                var dados = new
+                {
+                    id = est.Id,
+                    usuario_prontuario = Globals.UsuarioLogado // ENVIA O USUÁRIO PARA A API
+                };
+
                 using var client = new HttpClient();
-                var content = new StringContent(JsonConvert.SerializeObject(new { id = est.Id }), Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonConvert.SerializeObject(dados), Encoding.UTF8, "application/json");
                 await client.PostAsync($"{_apiBase}?action=excluir", content);
 
                 await CarregarEstacoes();
