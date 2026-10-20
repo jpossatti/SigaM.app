@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="SigaM.app.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SigaM.app"
+    xmlns:views="clr-namespace:SigaM.app.Views"
+    Title="SigaM.app">
+
+    <TabBar>
+        <!-- Aba 1: Dashboard -->
+        <ShellContent
+            Title="Dashboard"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Route="MainPage" />
+
+        <!-- Aba 2: Alarmes -->
+        <ShellContent
+            Title="Alarmes"
+            ContentTemplate="{DataTemplate views:AlarmesPage}"
+            Route="AlarmesPage" />
+
+        <!-- Aba 3: Estações -->
+        <ShellContent
+            Title="Estações"
+            ContentTemplate="{DataTemplate views:EstacoesPage}"
+            Route="EstacoesPage" />
+    </TabBar>
+
+</Shell>

@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SigaM.app.ViewModels"
+             x:Class="SigaM.app.MainPage"
+             BackgroundColor="#f4f6f9">
+
+    <ContentPage.BindingContext>
+        <vm:DashboardViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <!-- Título -->
+            <Label Text="Monitoramento SIGA-M" FontSize="26" FontAttributes="Bold" TextColor="#1a73e8" HorizontalOptions="Center" />
+
+            <!-- SELETOR DE LOCALIDADE -->
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 10" Padding="10,5" StrokeThickness="0">
+                <Grid ColumnDefinitions="Auto,*">
+                    <Label Text="📍 Localidade:" VerticalOptions="Center" FontAttributes="Bold" TextColor="#555" Margin="0,0,10,0"/>
+                    <Picker Grid.Column="1"
+                            Title="Selecione uma estação"
+                            ItemsSource="{Binding EstacoesDisponiveis}"
+                            ItemDisplayBinding="{Binding Localidade}"
+                            SelectedItem="{Binding EstacaoSelecionada}"
+                            TextColor="#1a73e8"
+                            FontAttributes="Bold"
+                            VerticalOptions="Center"/>
+                </Grid>
+            </Border>
+
+            <Label Text="{Binding LeituraAtual.DataHoraLeitura, StringFormat='Última atualização: {0}'}" FontSize="12" TextColor="Gray" HorizontalOptions="Center" />
+
+            <Button Text="Atualizar Agora" Command="{Binding AtualizarCommand}" BackgroundColor="#1a73e8" TextColor="White" CornerRadius="8" Margin="0,5,0,10"/>
+
+            <!-- Grid de Tensões -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="15" RowSpacing="15">
+                <Border Grid.Row="0" Grid.Column="0" BackgroundColor="White" StrokeShape="RoundRectangle 10" Padding="15">
+                    <VerticalStackLayout>
+                        <Label Text="REDE ELÉTRICA" FontSize="12" TextColor="Gray" FontAttributes="Bold"/>
+                        <Label Text="{Binding LeituraAtual.TensaoRede, StringFormat='{0:F1} Vca'}" FontSize="22" FontAttributes="Bold" TextColor="{Binding LeituraAtual.CorRede}" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="0" Grid.Column="1" BackgroundColor="White" StrokeShape="RoundRectangle 10" Padding="15">
+                    <VerticalStackLayout>
+                        <Label Text="GERADOR (GAE)" FontSize="12" TextColor="Gray" FontAttributes="Bold"/>
+                        <Label Text="{Binding LeituraAtual.TensaoGae, StringFormat='{0:F1} Vca'}" FontSize="22" FontAttributes="Bold" TextColor="Gray" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BackgroundColor="White" StrokeShape="RoundRectangle 10" Padding="15">
+                    <VerticalStackLayout>
+                        <Label Text="BATERIA 12V" FontSize="12" TextColor="Gray" FontAttributes="Bold"/>
+                        <Label Text="{Binding LeituraAtual.TensaoBateria, StringFormat='{0:F1} Vcc'}" FontSize="22" FontAttributes="Bold" TextColor="{Binding LeituraAtual.CorBateria}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- Status de Segurança -->
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 10" Padding="20" Margin="0,10,0,0">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Status de Segurança" FontSize="16" FontAttributes="Bold" TextColor="#333" />
+                    <Label Text="{Binding LeituraAtual.TextoArmado}" TextColor="{Binding LeituraAtual.CorArmado}" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Status das Portas -->
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 10" Padding="20" Margin="0,10,0,0">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Status das Portas" FontSize="16" FontAttributes="Bold" TextColor="#333" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Porta Principal" VerticalOptions="Center"/>
+                        <Label Grid.Column="1" Text="{Binding LeituraAtual.TextoPrincipal}" FontAttributes="Bold" TextColor="{Binding LeituraAtual.CorPrincipal}"/>
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Porta Gerador" VerticalOptions="Center"/>
+                        <Label Grid.Column="1" Text="{Binding LeituraAtual.TextoGerador}" FontAttributes="Bold" TextColor="{Binding LeituraAtual.CorGerador}"/>
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Porta Sala Baterias" VerticalOptions="Center"/>
+                        <Label Grid.Column="1" Text="{Binding LeituraAtual.TextoSalaBaterias}" FontAttributes="Bold" TextColor="{Binding LeituraAtual.CorSalaBaterias}"/>
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Porta Banheiro" VerticalOptions="Center"/>
+                        <Label Grid.Column="1" Text="{Binding LeituraAtual.TextoBanheiro}" FontAttributes="Bold" TextColor="{Binding LeituraAtual.CorBanheiro}"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

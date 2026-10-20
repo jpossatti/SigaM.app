@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="SigaM.app/SigaM.app.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+</Solution>

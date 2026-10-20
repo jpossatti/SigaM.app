@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SigaM.app.Views.EstacoesPage"
+             Title="Estações"
+             BackgroundColor="#f4f6f9">
+
+    <!-- O Grid Principal abraça a página inteira -->
+    <Grid>
+
+        <!-- LAYOUT PRINCIPAL -->
+        <Grid RowDefinitions="Auto,*" Padding="15">
+
+            <!-- Botões do Topo -->
+            <HorizontalStackLayout Grid.Row="0" Spacing="10" Margin="0,0,0,10">
+                <Button Text="➕ Nova Estação" Command="{Binding AbrirModalNovoCommand}" BackgroundColor="#198754" TextColor="White" CornerRadius="8"/>
+                <Button Text="🔄 Atualizar" Command="{Binding CarregarEstacoesCommand}" BackgroundColor="#1a73e8" TextColor="White" CornerRadius="8"/>
+            </HorizontalStackLayout>
+
+            <!-- Lista de Estações -->
+            <CollectionView Grid.Row="1" ItemsSource="{Binding Estacoes}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="White" Margin="0,0,0,10">
+                            <Grid Padding="15" ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="{Binding Localidade}" FontAttributes="Bold" FontSize="16" TextColor="#333"/>
+                                    <Label Text="{Binding CidadeEstado}" FontSize="12" TextColor="#666"/>
+                                    <Label Text="{Binding IpGerenciamento, StringFormat='IP: {0}'}" FontSize="13" TextColor="#1a73e8" FontAttributes="Bold"/>
+                                    <Label Text="{Binding Observacao}" FontSize="12" TextColor="#999" />
+                                </VerticalStackLayout>
+
+                                <!-- Botões de Ação na linha -->
+                                <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center">
+                                    <Button Text="✏️" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AbrirModalEditarCommand}" 
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#1a73e8" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="8"/>
+
+                                    <Button Text="🗑️" 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ExcluirCommand}" 
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#dc3545" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="8"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <!-- MODAL DE CADASTRO / EDIÇÃO (Sobreposto) -->
+        <Grid IsVisible="{Binding IsModalVisivel}" BackgroundColor="#80000000">
+            <Border BackgroundColor="White" StrokeShape="RoundRectangle 15" Padding="20" Margin="20" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="15">
+
+                    <Label Text="Cadastrar / Editar Estação" FontSize="18" FontAttributes="Bold" TextColor="#1a73e8" HorizontalOptions="Center"/>
+
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Localidade:" FontSize="12" TextColor="Gray"/>
+                        <Picker ItemsSource="{Binding LocalidadesDisponiveis}" 
+                                SelectedItem="{Binding LocalidadeSelecionada}"
+                                ItemDisplayBinding="{Binding Nome}"
+                                BackgroundColor="#f0f2f5" 
+                                TextColor="#333"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="IP de Gerenciamento:" FontSize="12" TextColor="Gray"/>
+                        <Entry Text="{Binding IpGerenciamento}" Placeholder="Ex: 10.10.1.1" BackgroundColor="#f0f2f5" TextColor="#333"/>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="5">
+                        <Label Text="Observação:" FontSize="12" TextColor="Gray"/>
+                        <Editor Text="{Binding Observacao}" Placeholder="Opcional..." HeightRequest="80" BackgroundColor="#f0f2f5" TextColor="#333"/>
+                    </VerticalStackLayout>
+
+                    <!-- Botões do Modal -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
+                        <Button Grid.Column="0" Text="Cancelar" Command="{Binding FecharModalCommand}" BackgroundColor="#e0e0e0" TextColor="#333" CornerRadius="8"/>
+                        <Button Grid.Column="1" Text="Salvar" Command="{Binding SalvarCommand}" BackgroundColor="#1a73e8" TextColor="White" CornerRadius="8"/>
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+    </Grid>
+</ContentPage>
