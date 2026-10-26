@@ -61,6 +61,14 @@
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Status de Segurança" FontSize="16" FontAttributes="Bold" TextColor="#333" />
                     <Label Text="{Binding LeituraAtual.TextoArmado}" TextColor="{Binding LeituraAtual.CorArmado}" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+                    <!-- NOVO BOTÃO DE ARMAR/DESARMAR -->
+                    <Button Text="{Binding TextoBotaoArmar}" 
+                            Command="{Binding ToggleArmarCommand}"
+                            BackgroundColor="{Binding CorBotaoArmar}" 
+                            TextColor="White" 
+                            CornerRadius="8" 
+                            Margin="0,10,0,0"/>
                 </VerticalStackLayout>
             </Border>
 

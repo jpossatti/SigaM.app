@@ -4,17 +4,17 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using SigaM.app.Models;
 using Newtonsoft.Json;
+using System.Text;
 using Microsoft.Maui.ApplicationModel;
 
 namespace SigaM.app.ViewModels
 {
     public class DashboardViewModel : INotifyPropertyChanged
     {
-        // URLs base
         private readonly string _apiDadosBase = "http://localhost:3000/modules/sigam/api_dados.php?estacao_id=";
         private readonly string _apiEstacoes = "http://localhost:3000/modules/sigam/api_estacoes.php";
+        private readonly string _apiEnviarComando = "http://localhost:3000/modules/sigam/api_enviar_comando.php";
 
-        // Lista de estações para o Picker
         public ObservableCollection<Estacao> EstacoesDisponiveis { get; set; } = new();
 
         private Estacao? _estacaoSelecionada;
@@ -27,11 +27,7 @@ namespace SigaM.app.ViewModels
                 {
                     _estacaoSelecionada = value;
                     OnPropertyChanged();
-                    // Quando o usuário muda a estação, busca os novos dados imediatamente
-                    if (_estacaoSelecionada != null)
-                    {
-                        _ = BuscarDados();
-                    }
+                    if (_estacaoSelecionada != null) _ = BuscarDados();
                 }
             }
         }
@@ -44,16 +40,23 @@ namespace SigaM.app.ViewModels
             {
                 _leituraAtual = value;
                 OnPropertyChanged();
+                // Notifica o XAML que o texto do botão pode ter mudado
+                OnPropertyChanged(nameof(TextoBotaoArmar));
+                OnPropertyChanged(nameof(CorBotaoArmar));
             }
         }
 
+        // Propriedades para o Botão
+        public string TextoBotaoArmar => LeituraAtual?.SistemaArmado == 1 ? "DESARMAR SISTEMA" : "ARMAR SISTEMA";
+        public Color CorBotaoArmar => LeituraAtual?.SistemaArmado == 1 ? Colors.DarkRed : Colors.Green;
+
         public ICommand AtualizarCommand { get; }
+        public ICommand ToggleArmarCommand { get; }
 
         public DashboardViewModel()
         {
             AtualizarCommand = new Command(async () => await BuscarDados());
-
-            // Carrega as estações ao iniciar e depois inicia o loop
+            ToggleArmarCommand = new Command(async () => await AlternarArmamento());
             _ = Inicializar();
         }
 
@@ -79,31 +82,20 @@ namespace SigaM.app.ViewModels
                         EstacoesDisponiveis.Clear();
                         if (lista != null)
                         {
-                            foreach (var est in lista)
-                            {
-                                EstacoesDisponiveis.Add(est);
-                            }
-
-                            // Seleciona a primeira estação por padrão
-                            if (EstacoesDisponiveis.Count > 0)
-                            {
-                                EstacaoSelecionada = EstacoesDisponiveis[0];
-                            }
+                            foreach (var est in lista) EstacoesDisponiveis.Add(est);
+                            if (EstacoesDisponiveis.Count > 0) EstacaoSelecionada = EstacoesDisponiveis[0];
                         }
                     });
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro ao carregar estações: {ex.Message}");
-            }
+            catch (Exception ex) { Console.WriteLine($"Erro ao carregar estações: {ex.Message}"); }
         }
 
         private async Task IniciarAtualizacaoAutomatica()
         {
             while (true)
             {
-                await Task.Delay(5000); // Atualiza a cada 5 segundos
+                await Task.Delay(5000);
                 await BuscarDados();
             }
         }
@@ -115,30 +107,56 @@ namespace SigaM.app.ViewModels
             try
             {
                 using var client = new HttpClient();
-                // Usa o ID da estação selecionada na URL
                 var response = await client.GetStringAsync(_apiDadosBase + EstacaoSelecionada.Id);
                 dynamic? json = JsonConvert.DeserializeObject(response);
 
                 if (json != null && json.leitura != null)
                 {
                     var novaLeitura = JsonConvert.DeserializeObject<Leitura>(json.leitura.ToString());
-
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        LeituraAtual = novaLeitura;
-                    });
+                    MainThread.BeginInvokeOnMainThread(() => { LeituraAtual = novaLeitura; });
                 }
+            }
+            catch (Exception ex) { Console.WriteLine($"Erro ao buscar dados: {ex.Message}"); }
+        }
+
+        private async Task AlternarArmamento()
+        {
+            if (EstacaoSelecionada == null || LeituraAtual == null) return;
+
+            string comando = LeituraAtual.SistemaArmado == 1 ? "desarmar" : "armar";
+            string acao = comando == "armar" ? "ARMAR" : "DESARMAR";
+
+            // 1. Pede confirmação (Modal nativo do MAUI)
+            bool confirm = await Application.Current!.Windows[0].Page!.DisplayAlert(
+                "Confirmação",
+                $"Tem certeza que deseja {acao} o sistema?",
+                "Sim", "Cancelar");
+
+            if (!confirm) return;
+
+            try
+            {
+                // 2. Envia o comando para o PHP
+                var dados = new
+                {
+                    estacao_id = EstacaoSelecionada.Id,
+                    comando = comando,
+                    usuario_id = 1 // Aqui poderia usar Globals.UsuarioId
+                };
+
+                var content = new StringContent(JsonConvert.SerializeObject(dados), Encoding.UTF8, "application/json");
+                using var client = new HttpClient();
+                await client.PostAsync(_apiEnviarComando, content);
+
+                await Application.Current!.Windows[0].Page!.DisplayAlert("Sucesso", $"Comando {acao} enviado com sucesso!", "OK");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erro ao buscar dados: {ex.Message}");
+                await Application.Current!.Windows[0].Page!.DisplayAlert("Erro", "Falha ao enviar comando: " + ex.Message, "OK");
             }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

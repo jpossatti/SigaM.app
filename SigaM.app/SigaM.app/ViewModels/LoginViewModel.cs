@@ -59,15 +59,18 @@ namespace SigaM.app.ViewModels
 
                 dynamic? json = JsonConvert.DeserializeObject(responseString);
 
-                // ... dentro do método RealizarLogin() ...
                 if (json != null && json.status == "sucesso")
                 {
                     var usuario = JsonConvert.DeserializeObject<Usuario>(json.usuario.ToString());
 
-                    // SALVA O USUÁRIO LOGADO AQUI
-                    Globals.UsuarioLogado = usuario?.Prontuario ?? "usuario_comum";
+                    // SALVA O USUÁRIO LOGADO USANDO O MÉTODO DA GLOBALS
+                    Globals.DefinirUsuario(
+                        usuario?.Id ?? 0,
+                        usuario?.Prontuario ?? "",
+                        usuario?.Nome ?? ""
+                    );
 
-                    // Vai para o Dashboard
+                    // Vai para o Dashboard (AppShell)
                     Application.Current!.Windows[0].Page = new AppShell();
                 }
                 else
@@ -86,6 +89,9 @@ namespace SigaM.app.ViewModels
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
