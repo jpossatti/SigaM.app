@@ -11,9 +11,12 @@ namespace SigaM.app.ViewModels
 {
     public class DashboardViewModel : INotifyPropertyChanged
     {
-        private readonly string _apiDadosBase = "http://localhost:3000/modules/sigam/api_dados.php?estacao_id=";
-        private readonly string _apiEstacoes = "http://localhost:3000/modules/sigam/api_estacoes.php";
-        private readonly string _apiEnviarComando = "http://localhost:3000/modules/sigam/api_enviar_comando.php";
+        // --- CONFIGURAÇÃO DE URLS DO SERVIDOR ---
+        // Dica: Se for rodar no emulador Android, troque 'localhost' pelo IP da máquina (ex: 192.168.1.133)
+        private readonly string _baseUrl = "http://localhost:3000/modules/sigam/";
+        private readonly string _apiDadosBase;
+        private readonly string _apiEstacoes;
+        private readonly string _apiEnviarComando;
 
         public ObservableCollection<Estacao> EstacoesDisponiveis { get; set; } = new();
 
@@ -27,7 +30,11 @@ namespace SigaM.app.ViewModels
                 {
                     _estacaoSelecionada = value;
                     OnPropertyChanged();
-                    if (_estacaoSelecionada != null) _ = BuscarDados();
+
+                    if (_estacaoSelecionada != null)
+                    {
+                        _ = BuscarDados();
+                    }
                 }
             }
         }
@@ -40,23 +47,34 @@ namespace SigaM.app.ViewModels
             {
                 _leituraAtual = value;
                 OnPropertyChanged();
-                // Notifica o XAML que o texto do botão pode ter mudado
+
+                // Notifica o XAML que o texto e a cor do botão mudaram
                 OnPropertyChanged(nameof(TextoBotaoArmar));
                 OnPropertyChanged(nameof(CorBotaoArmar));
+                OnPropertyChanged(nameof(EstaOnline));
             }
         }
 
-        // Propriedades para o Botão
+        // --- PROPRIEDADES DO BOTÃO DE COMANDO ---
         public string TextoBotaoArmar => LeituraAtual?.SistemaArmado == 1 ? "DESARMAR SISTEMA" : "ARMAR SISTEMA";
         public Color CorBotaoArmar => LeituraAtual?.SistemaArmado == 1 ? Colors.DarkRed : Colors.Green;
 
+        // Verifica se o ESP32 enviou algum IP recentemente (Online)
+        public bool EstaOnline => EstacaoSelecionada?.IpLocalAtual != null && EstacaoSelecionada?.IpLocalAtual != "Offline";
+
+        // --- COMANDOS ---
         public ICommand AtualizarCommand { get; }
         public ICommand ToggleArmarCommand { get; }
 
         public DashboardViewModel()
         {
+            _apiDadosBase = _baseUrl + "api_dados.php?estacao_id=";
+            _apiEstacoes = _baseUrl + "api_estacoes.php";
+            _apiEnviarComando = _baseUrl + "api_enviar_comando.php";
+
             AtualizarCommand = new Command(async () => await BuscarDados());
             ToggleArmarCommand = new Command(async () => await AlternarArmamento());
+
             _ = Inicializar();
         }
 
@@ -83,7 +101,10 @@ namespace SigaM.app.ViewModels
                         if (lista != null)
                         {
                             foreach (var est in lista) EstacoesDisponiveis.Add(est);
-                            if (EstacoesDisponiveis.Count > 0) EstacaoSelecionada = EstacoesDisponiveis[0];
+
+                            // Seleciona a primeira estação por padrão
+                            if (EstacoesDisponiveis.Count > 0)
+                                EstacaoSelecionada = EstacoesDisponiveis[0];
                         }
                     });
                 }
@@ -123,13 +144,23 @@ namespace SigaM.app.ViewModels
         {
             if (EstacaoSelecionada == null || LeituraAtual == null) return;
 
+            // Bloqueia a ação se o ESP32 estiver offline
+            if (!EstaOnline)
+            {
+                await Application.Current!.Windows[0].Page!.DisplayAlert(
+                    "Estação Offline",
+                    "Não é possível enviar comandos. O ESP32 desta estação não está conectado.",
+                    "OK");
+                return;
+            }
+
             string comando = LeituraAtual.SistemaArmado == 1 ? "desarmar" : "armar";
             string acao = comando == "armar" ? "ARMAR" : "DESARMAR";
 
-            // 1. Pede confirmação (Modal nativo do MAUI)
+            // 1. Pede confirmação
             bool confirm = await Application.Current!.Windows[0].Page!.DisplayAlert(
                 "Confirmação",
-                $"Tem certeza que deseja {acao} o sistema?",
+                $"Tem certeza que deseja {acao} o sistema em {EstacaoSelecionada.Localidade}?",
                 "Sim", "Cancelar");
 
             if (!confirm) return;
@@ -141,18 +172,28 @@ namespace SigaM.app.ViewModels
                 {
                     estacao_id = EstacaoSelecionada.Id,
                     comando = comando,
-                    usuario_id = 1 // Aqui poderia usar Globals.UsuarioId
+                    usuario_id = Globals.UsuarioId // Pega o ID de quem está logado
                 };
 
                 var content = new StringContent(JsonConvert.SerializeObject(dados), Encoding.UTF8, "application/json");
                 using var client = new HttpClient();
-                await client.PostAsync(_apiEnviarComando, content);
 
-                await Application.Current!.Windows[0].Page!.DisplayAlert("Sucesso", $"Comando {acao} enviado com sucesso!", "OK");
+                var response = await client.PostAsync(_apiEnviarComando, content);
+                var responseBody = await response.Content.ReadAsStringAsync();
+                dynamic? json = JsonConvert.DeserializeObject(responseBody);
+
+                if (json != null && json.status == "sucesso")
+                {
+                    await Application.Current!.Windows[0].Page!.DisplayAlert("Sucesso", $"Comando {acao} enviado com sucesso!", "OK");
+                }
+                else
+                {
+                    await Application.Current!.Windows[0].Page!.DisplayAlert("Aviso", json?.mensagem ?? "Falha ao enviar comando.", "OK");
+                }
             }
             catch (Exception ex)
             {
-                await Application.Current!.Windows[0].Page!.DisplayAlert("Erro", "Falha ao enviar comando: " + ex.Message, "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlert("Erro", "Falha na conexão com o servidor: " + ex.Message, "OK");
             }
         }
 

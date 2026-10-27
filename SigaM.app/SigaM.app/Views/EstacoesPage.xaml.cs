@@ -8,7 +8,7 @@ public partial class EstacoesPage : ContentPage
     {
         InitializeComponent();
 
-        // Vincula a tela ao ViewModel programaticamente
+        // Vincula a ViewModel programaticamente (Evita o erro XLS0414)
         BindingContext = new EstacoesViewModel();
     }
 }

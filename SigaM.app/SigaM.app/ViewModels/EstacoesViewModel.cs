@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using SigaM.app.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq; // Necessário para ler o JSON manualmente
 using System.Text;
 using Microsoft.Maui.ApplicationModel;
 
@@ -15,10 +16,8 @@ namespace SigaM.app.ViewModels
         public ObservableCollection<Estacao> Estacoes { get; set; } = new();
         public ObservableCollection<Localidade> LocalidadesDisponiveis { get; set; } = new();
 
-        // CONTROLE DE PERMISSÃO
         public bool PodeEditar => Globals.IsAdmin;
 
-        // CONTROLE DO MODAL
         private bool _isModalVisivel = false;
         public bool IsModalVisivel
         {
@@ -27,6 +26,7 @@ namespace SigaM.app.ViewModels
         }
 
         private int _estacaoIdAtual;
+
         private Localidade? _localidadeSelecionada;
         public Localidade? LocalidadeSelecionada
         {
@@ -48,7 +48,6 @@ namespace SigaM.app.ViewModels
             set { _observacao = value; OnPropertyChanged(); }
         }
 
-        // COMANDOS
         public Command CarregarEstacoesCommand { get; }
         public Command AbrirModalNovoCommand { get; }
         public Command AbrirModalEditarCommand { get; }
@@ -73,20 +72,55 @@ namespace SigaM.app.ViewModels
             try
             {
                 using var client = new HttpClient();
-                var response = await client.GetStringAsync($"{_apiBase}?action=listar");
-                dynamic? json = JsonConvert.DeserializeObject(response);
+                // Cache killer
+                var url = $"{_apiBase}?action=listar&t={DateTime.Now.Ticks}";
+                var response = await client.GetStringAsync(url);
 
-                if (json != null && json.estacoes != null)
+                // LENDO O JSON NA MARRA (JObject)
+                JObject json = JObject.Parse(response);
+                JArray estacoesArray = (JArray)json["estacoes"];
+
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    var lista = JsonConvert.DeserializeObject<List<Estacao>>(json.estacoes.ToString());
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    Estacoes.Clear();
+                    if (estacoesArray != null)
                     {
-                        Estacoes.Clear();
-                        if (lista != null) foreach (var item in lista) Estacoes.Add(item);
-                    });
-                }
+                        foreach (var item in estacoesArray)
+                        {
+                            // Criando o objeto e preenchendo campo por campo
+                            var novaEstacao = new Estacao
+                            {
+                                Id = (int)item["id"],
+                                LocalidadeId = (int)item["localidade_id"],
+                                Localidade = (string)item["localidade"],
+                                Cidade = (string)item["cidade"],
+                                Estado = (string)item["estado"],
+                                IpGerenciamento = (string)item["ip_gerenciamento"],
+                                IpLocalAtual = (string)item["ip_local_atual"], // AQUI ESTÁ O SEGREDO
+                                VersaoFirmware = (string)item["versao_firmware"],
+                                UltimaConexao = (string)item["ultima_conexao"],
+                                Observacao = (string)item["observacao"]
+                            };
+
+                            Estacoes.Add(novaEstacao);
+                        }
+
+                        // ALERTA DE DEBUG
+                        if (Estacoes.Count > 0)
+                        {
+                            var primeira = Estacoes[0];
+                            Application.Current!.Windows[0].Page!.DisplayAlert(
+                                "Debug de Leitura JSON",
+                                $"Estação: {primeira.Localidade}\nIP Local: {primeira.IpLocalAtual ?? "NULO"}\nVersão: {primeira.VersaoFirmware ?? "NULA"}",
+                                "OK");
+                        }
+                    }
+                });
             }
-            catch (Exception ex) { Console.WriteLine($"Erro: {ex.Message}"); }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao carregar estações: {ex.Message}");
+            }
         }
 
         private async Task CarregarLocalidadesLivres()
@@ -94,26 +128,36 @@ namespace SigaM.app.ViewModels
             try
             {
                 using var client = new HttpClient();
-                var response = await client.GetStringAsync($"{_apiBase}?action=localidades");
-                dynamic? json = JsonConvert.DeserializeObject(response);
+                var url = $"{_apiBase}?action=localidades&t={DateTime.Now.Ticks}";
+                var response = await client.GetStringAsync(url);
 
-                if (json != null && json.localidades != null)
+                JObject json = JObject.Parse(response);
+                JArray locArray = (JArray)json["localidades"];
+
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    var lista = JsonConvert.DeserializeObject<List<Localidade>>(json.localidades.ToString());
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    LocalidadesDisponiveis.Clear();
+                    if (locArray != null)
                     {
-                        LocalidadesDisponiveis.Clear();
-                        if (lista != null) foreach (var item in lista) LocalidadesDisponiveis.Add(item);
-                    });
-                }
+                        foreach (var item in locArray)
+                        {
+                            LocalidadesDisponiveis.Add(new Localidade
+                            {
+                                Id = (int)item["id"],
+                                Nome = (string)item["nome"]
+                            });
+                        }
+                    }
+                });
             }
-            catch (Exception ex) { Console.WriteLine($"Erro: {ex.Message}"); }
+            catch (Exception ex) { Console.WriteLine($"Erro ao carregar localidades: {ex.Message}"); }
         }
 
         private async Task AbrirModalNovo()
         {
             if (!PodeEditar) return;
             await CarregarLocalidadesLivres();
+
             _estacaoIdAtual = 0;
             LocalidadeSelecionada = null;
             IpGerenciamento = string.Empty;
@@ -148,7 +192,7 @@ namespace SigaM.app.ViewModels
                     localidade_id = LocalidadeSelecionada.Id,
                     ip_gerenciamento = IpGerenciamento,
                     observacao = Observacao,
-                    usuario_prontuario = Globals.UsuarioLogado // Validação no PHP
+                    usuario_prontuario = Globals.UsuarioLogado
                 };
 
                 using var client = new HttpClient();
@@ -158,7 +202,7 @@ namespace SigaM.app.ViewModels
                 IsModalVisivel = false;
                 await CarregarEstacoes();
             }
-            catch (Exception ex) { Console.WriteLine($"Erro: {ex.Message}"); }
+            catch (Exception ex) { Console.WriteLine($"Erro ao salvar: {ex.Message}"); }
         }
 
         private async Task Excluir(Estacao? est)
@@ -177,7 +221,7 @@ namespace SigaM.app.ViewModels
 
                 await CarregarEstacoes();
             }
-            catch (Exception ex) { Console.WriteLine($"Erro: {ex.Message}"); }
+            catch (Exception ex) { Console.WriteLine($"Erro ao excluir: {ex.Message}"); }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

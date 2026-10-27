@@ -1,27 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SigaM.app.ViewModels"
              x:Class="SigaM.app.Views.EstacoesPage"
              Title="Estações"
              BackgroundColor="#f4f6f9">
 
-    <Grid>
+    <ContentPage.BindingContext>
+        <vm:EstacoesViewModel />
+    </ContentPage.BindingContext>
 
-        <!-- LAYOUT PRINCIPAL -->
+    <Grid>
         <Grid RowDefinitions="Auto,*" Padding="15">
 
-            <!-- Botões do Topo -->
             <HorizontalStackLayout Grid.Row="0" Spacing="10" Margin="0,0,0,10">
-                <!-- Botão Nova Estação (Apenas Admin) -->
-                <Button Text="➕ Nova Estação" 
-                        Command="{Binding AbrirModalNovoCommand}" 
-                        BackgroundColor="#198754" TextColor="White" CornerRadius="8"
-                        IsVisible="{Binding PodeEditar}" />
-
+                <Button Text="➕ Nova Estação" Command="{Binding AbrirModalNovoCommand}" BackgroundColor="#198754" TextColor="White" CornerRadius="8" IsVisible="{Binding PodeEditar}" />
                 <Button Text="🔄 Atualizar" Command="{Binding CarregarEstacoesCommand}" BackgroundColor="#1a73e8" TextColor="White" CornerRadius="8"/>
             </HorizontalStackLayout>
 
-            <!-- Lista de Estações -->
             <CollectionView Grid.Row="1" ItemsSource="{Binding Estacoes}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -30,23 +26,31 @@
                                 <VerticalStackLayout Spacing="4">
                                     <Label Text="{Binding Localidade}" FontAttributes="Bold" FontSize="16" TextColor="#333"/>
                                     <Label Text="{Binding CidadeEstado}" FontSize="12" TextColor="#666"/>
-                                    <Label Text="{Binding IpGerenciamento, StringFormat='IP: {0}'}" FontSize="13" TextColor="#1a73e8" FontAttributes="Bold"/>
-                                    <Label Text="{Binding Observacao}" FontSize="12" TextColor="#999" />
+
+                                    <Label Text="{Binding IpGerenciamento, StringFormat='Rádio: {0}'}" FontSize="12" TextColor="#666" Margin="0,5,0,0"/>
+
+                                    <!-- Dados do ESP32 -->
+                                    <Label Text="{Binding TextoIp}" FontSize="12" FontAttributes="Bold" TextColor="#0f5132" Margin="0,5,0,0"/>
+                                    <Label Text="{Binding TextoVersao}" FontSize="11" TextColor="#1a73e8"/>
+                                    <Label Text="{Binding TextoData}" FontSize="10" TextColor="#999"/>
                                 </VerticalStackLayout>
 
-                                <!-- Botões de Ação (Apenas Admin) -->
-                                <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center"
+                                <!-- Botões de Ação (Apenas Admin E se estiver online) -->
+                                <HorizontalStackLayout Grid.Column="1" Spacing="5" VerticalOptions="Center" 
                                                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.PodeEditar}">
 
                                     <Button Text="✏️" 
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.AbrirModalEditarCommand}" 
-                                            CommandParameter="{Binding .}"
-                                            BackgroundColor="#1a73e8" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="8"/>
+                                            CommandParameter="{Binding .}" 
+                                            BackgroundColor="#1a73e8" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="8"
+                                            IsVisible="{Binding PodeEditarEstacao}" />
 
                                     <Button Text="🗑️" 
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ExcluirCommand}" 
-                                            CommandParameter="{Binding .}"
-                                            BackgroundColor="#dc3545" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="8"/>
+                                            CommandParameter="{Binding .}" 
+                                            BackgroundColor="#dc3545" TextColor="White" WidthRequest="40" HeightRequest="40" CornerRadius="8"
+                                            IsVisible="{Binding PodeEditarEstacao}" />
+
                                 </HorizontalStackLayout>
                             </Grid>
                         </Border>
@@ -72,7 +76,7 @@
                     </VerticalStackLayout>
 
                     <VerticalStackLayout Spacing="5">
-                        <Label Text="IP de Gerenciamento:" FontSize="12" TextColor="Gray"/>
+                        <Label Text="IP de Gerenciamento (Rádio):" FontSize="12" TextColor="Gray"/>
                         <Entry Text="{Binding IpGerenciamento}" Placeholder="Ex: 10.10.1.1" BackgroundColor="#f0f2f5" TextColor="#333"/>
                     </VerticalStackLayout>
 
@@ -81,7 +85,6 @@
                         <Editor Text="{Binding Observacao}" Placeholder="Opcional..." HeightRequest="80" BackgroundColor="#f0f2f5" TextColor="#333"/>
                     </VerticalStackLayout>
 
-                    <!-- Botões do Modal -->
                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
                         <Button Grid.Column="0" Text="Cancelar" Command="{Binding FecharModalCommand}" BackgroundColor="#e0e0e0" TextColor="#333" CornerRadius="8"/>
                         <Button Grid.Column="1" Text="Salvar" Command="{Binding SalvarCommand}" BackgroundColor="#1a73e8" TextColor="White" CornerRadius="8"/>
@@ -90,6 +93,5 @@
                 </VerticalStackLayout>
             </Border>
         </Grid>
-
     </Grid>
 </ContentPage>
