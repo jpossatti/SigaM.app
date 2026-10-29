@@ -5,10 +5,6 @@
              x:Class="SigaM.app.MainPage"
              BackgroundColor="#f4f6f9">
 
-    <ContentPage.BindingContext>
-        <vm:DashboardViewModel />
-    </ContentPage.BindingContext>
-
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="15">
 
@@ -66,12 +62,12 @@
 
                     <!-- BOTÃO DE ARMAR/DESARMAR -->
                     <Button Text="{Binding TextoBotaoArmar}" 
-                        Command="{Binding ToggleArmarCommand}"
-                        BackgroundColor="{Binding CorBotaoArmar}" 
-                        IsEnabled="{Binding EstaOnline}"
-                        TextColor="White" 
-                         CornerRadius="8" 
-                         Margin="0,10,0,0"/>
+                            Command="{Binding ToggleArmarCommand}"
+                            BackgroundColor="{Binding CorBotaoArmar}" 
+                            IsEnabled="{Binding EstaOnline}"
+                            TextColor="White" 
+                            CornerRadius="8" 
+                            Margin="0,10,0,0"/>
                 </VerticalStackLayout>
             </Border>
 

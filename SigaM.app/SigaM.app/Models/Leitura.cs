@@ -1,60 +1,91 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
+using Microsoft.Maui.Graphics;
 
 namespace SigaM.app.Models
 {
     public class Leitura
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonProperty("estacao_id")]
+        [JsonPropertyName("estacao_id")]
         public int EstacaoId { get; set; }
 
-        [JsonProperty("tensao_rede")]
+        // A MÁGICA ACONTECE AQUI: Dizemos para ler mesmo se vier como string
+        [JsonPropertyName("tensao_rede")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public double TensaoRede { get; set; }
 
-        [JsonProperty("tensao_gae")]
+        [JsonPropertyName("tensao_gae")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public double TensaoGae { get; set; }
 
-        [JsonProperty("tensao_bateria")]
+        [JsonPropertyName("tensao_bateria")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public double TensaoBateria { get; set; }
 
-        [JsonProperty("porta_principal_status")]
+        [JsonPropertyName("porta_principal_status")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public int PortaPrincipalStatus { get; set; }
 
-        [JsonProperty("porta_gerador_status")]
+        [JsonPropertyName("porta_gerador_status")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public int PortaGeradorStatus { get; set; }
 
-        [JsonProperty("porta_sala_baterias_status")]
+        [JsonPropertyName("porta_sala_baterias_status")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public int PortaSalaBateriasStatus { get; set; }
 
-        [JsonProperty("porta_banheiro_status")]
+        [JsonPropertyName("porta_banheiro_status")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public int PortaBanheiroStatus { get; set; }
 
-        [JsonProperty("sistema_armado")]
+        [JsonPropertyName("sistema_armado")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public int SistemaArmado { get; set; }
 
-        [JsonProperty("alarme_ativo")]
+        [JsonPropertyName("alarme_ativo")]
+        [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
         public int AlarmeAtivo { get; set; }
 
-        [JsonProperty("data_hora_leitura")]
+        [JsonPropertyName("data_hora_leitura")]
         public string? DataHoraLeitura { get; set; }
 
         // --- PROPRIEDADES CALCULADAS PARA A TELA ---
+        [JsonIgnore]
         public Color CorRede => (TensaoRede >= 110 && TensaoRede <= 135) ? Colors.Green : Colors.Red;
+
+        [JsonIgnore]
         public Color CorBateria => (TensaoBateria >= 11.5) ? Colors.Green : Colors.Red;
 
+        [JsonIgnore]
         public string TextoPrincipal => PortaPrincipalStatus == 1 ? "Aberta" : "Fechada";
+
+        [JsonIgnore]
         public string TextoGerador => PortaGeradorStatus == 1 ? "Aberta" : "Fechada";
+
+        [JsonIgnore]
         public string TextoSalaBaterias => PortaSalaBateriasStatus == 1 ? "Aberta" : "Fechada";
+
+        [JsonIgnore]
         public string TextoBanheiro => PortaBanheiroStatus == 1 ? "Aberta" : "Fechada";
 
+        [JsonIgnore]
         public Color CorPrincipal => PortaPrincipalStatus == 1 ? Colors.Red : Colors.Green;
+
+        [JsonIgnore]
         public Color CorGerador => PortaGeradorStatus == 1 ? Colors.Red : Colors.Green;
+
+        [JsonIgnore]
         public Color CorSalaBaterias => PortaSalaBateriasStatus == 1 ? Colors.Red : Colors.Green;
+
+        [JsonIgnore]
         public Color CorBanheiro => PortaBanheiroStatus == 1 ? Colors.Red : Colors.Green;
 
+        [JsonIgnore]
         public string TextoArmado => SistemaArmado == 1 ? "ARMADO" : "DESARMADO";
+
+        [JsonIgnore]
         public Color CorArmado => SistemaArmado == 1 ? Colors.Green : Colors.Gray;
     }
 }

@@ -1,14 +1,23 @@
 using SigaM.app.ViewModels;
 
-namespace SigaM.app.Views;
-
-public partial class AlarmesPage : ContentPage
+namespace SigaM.app.Views
 {
-    public AlarmesPage()
+    public partial class AlarmesPage : ContentPage
     {
-        InitializeComponent();
+        public AlarmesPage()
+        {
+            InitializeComponent();
+        }
 
-        // Vincula a tela ao ViewModel programaticamente
-        BindingContext = new AlarmesViewModel();
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            // Carrega os dados assim que a tela é exibida
+            if (BindingContext is AlarmesViewModel viewModel)
+            {
+                await viewModel.CarregarDados();
+            }
+        }
     }
 }

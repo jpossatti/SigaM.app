@@ -2,21 +2,25 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using SigaM.app.Models;
-using Newtonsoft.Json;
 using System.Text;
-using Microsoft.Maui.ApplicationModel;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using SigaM.app.Models;
+using Microsoft.Maui.Graphics;
 
 namespace SigaM.app.ViewModels
 {
     public class DashboardViewModel : INotifyPropertyChanged
     {
-        // --- CONFIGURAÇÃO DE URLS DO SERVIDOR ---
-        // Dica: Se for rodar no emulador Android, troque 'localhost' pelo IP da máquina (ex: 192.168.1.133)
-        private readonly string _baseUrl = "http://localhost:3000/modules/sigam/";
+        // ============================================================
+        // 1. CONFIGURAÇÃO DE URLS
+        // ============================================================
+        private readonly string _baseUrl = "http://193.168.1.71:3000/modules/sigam/";
         private readonly string _apiDadosBase;
         private readonly string _apiEstacoes;
         private readonly string _apiEnviarComando;
+
+        private IDispatcherTimer? _timer;
 
         public ObservableCollection<Estacao> EstacoesDisponiveis { get; set; } = new();
 
@@ -30,6 +34,7 @@ namespace SigaM.app.ViewModels
                 {
                     _estacaoSelecionada = value;
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(EstaOnline));
 
                     if (_estacaoSelecionada != null)
                     {
@@ -47,22 +52,43 @@ namespace SigaM.app.ViewModels
             {
                 _leituraAtual = value;
                 OnPropertyChanged();
-
-                // Notifica o XAML que o texto e a cor do botão mudaram
                 OnPropertyChanged(nameof(TextoBotaoArmar));
                 OnPropertyChanged(nameof(CorBotaoArmar));
-                OnPropertyChanged(nameof(EstaOnline));
+
+                // --- CORREÇÃO CRUCIAL: Força a atualização das propriedades internas na tela ---
+                if (_leituraAtual != null)
+                {
+                    OnPropertyChanged(nameof(LeituraAtual.TensaoRede));
+                    OnPropertyChanged(nameof(LeituraAtual.TensaoGae));
+                    OnPropertyChanged(nameof(LeituraAtual.TensaoBateria));
+                    OnPropertyChanged(nameof(LeituraAtual.PortaPrincipalStatus));
+                    OnPropertyChanged(nameof(LeituraAtual.PortaGeradorStatus));
+                    OnPropertyChanged(nameof(LeituraAtual.PortaSalaBateriasStatus));
+                    OnPropertyChanged(nameof(LeituraAtual.PortaBanheiroStatus));
+                    OnPropertyChanged(nameof(LeituraAtual.SistemaArmado));
+                    OnPropertyChanged(nameof(LeituraAtual.TextoArmado));
+                    OnPropertyChanged(nameof(LeituraAtual.TextoPrincipal));
+                    OnPropertyChanged(nameof(LeituraAtual.TextoGerador));
+                    OnPropertyChanged(nameof(LeituraAtual.TextoSalaBaterias));
+                    OnPropertyChanged(nameof(LeituraAtual.TextoBanheiro));
+                    OnPropertyChanged(nameof(LeituraAtual.CorRede));
+                    OnPropertyChanged(nameof(LeituraAtual.CorBateria));
+                    OnPropertyChanged(nameof(LeituraAtual.CorArmado));
+                    OnPropertyChanged(nameof(LeituraAtual.CorPrincipal));
+                    OnPropertyChanged(nameof(LeituraAtual.CorGerador));
+                    OnPropertyChanged(nameof(LeituraAtual.CorSalaBaterias));
+                    OnPropertyChanged(nameof(LeituraAtual.CorBanheiro));
+                    OnPropertyChanged(nameof(LeituraAtual.DataHoraLeitura));
+                }
             }
         }
 
-        // --- PROPRIEDADES DO BOTÃO DE COMANDO ---
-        public string TextoBotaoArmar => LeituraAtual?.SistemaArmado == 1 ? "DESARMAR SISTEMA" : "ARMAR SISTEMA";
-        public Color CorBotaoArmar => LeituraAtual?.SistemaArmado == 1 ? Colors.DarkRed : Colors.Green;
+        // --- PROPRIEDADES VISUAIS ---
+        public string TextoBotaoArmar => LeituraAtual?.SistemaArmado == 1 ? "🔓 DESARMAR SISTEMA" : "🔒 ARMAR SISTEMA";
+        public Color CorBotaoArmar => LeituraAtual?.SistemaArmado == 1 ? Color.FromArgb("#dc3545") : Color.FromArgb("#198754");
 
-        // Verifica se o ESP32 enviou algum IP recentemente (Online)
-        public bool EstaOnline => EstacaoSelecionada?.IpLocalAtual != null && EstacaoSelecionada?.IpLocalAtual != "Offline";
+        public bool EstaOnline => EstacaoSelecionada != null && !string.IsNullOrEmpty(EstacaoSelecionada.IpLocalAtual) && EstacaoSelecionada.IpLocalAtual != "Offline";
 
-        // --- COMANDOS ---
         public ICommand AtualizarCommand { get; }
         public ICommand ToggleArmarCommand { get; }
 
@@ -75,13 +101,12 @@ namespace SigaM.app.ViewModels
             AtualizarCommand = new Command(async () => await BuscarDados());
             ToggleArmarCommand = new Command(async () => await AlternarArmamento());
 
-            _ = Inicializar();
-        }
-
-        private async Task Inicializar()
-        {
-            await CarregarEstacoes();
-            _ = IniciarAtualizacaoAutomatica();
+            // Inicializa as chamadas na MainThread para evitar problemas de contexto
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await CarregarEstacoes();
+                IniciarAtualizacaoAutomatica();
+            });
         }
 
         private async Task CarregarEstacoes()
@@ -89,36 +114,48 @@ namespace SigaM.app.ViewModels
             try
             {
                 using var client = new HttpClient();
-                var response = await client.GetStringAsync(_apiEstacoes);
-                dynamic? json = JsonConvert.DeserializeObject(response);
+                client.Timeout = TimeSpan.FromSeconds(10);
+                var response = await client.GetStringAsync($"{_apiEstacoes}?t={DateTime.Now.Ticks}");
 
-                if (json != null && json.estacoes != null)
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var resultado = JsonSerializer.Deserialize<EstacoesResponse>(response, options);
+
+                MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    var lista = JsonConvert.DeserializeObject<List<Estacao>>(json.estacoes.ToString());
-                    MainThread.BeginInvokeOnMainThread(() =>
+                    EstacoesDisponiveis.Clear();
+                    if (resultado?.Estacoes != null && resultado.Estacoes.Count > 0)
                     {
-                        EstacoesDisponiveis.Clear();
-                        if (lista != null)
+                        foreach (var est in resultado.Estacoes)
                         {
-                            foreach (var est in lista) EstacoesDisponiveis.Add(est);
-
-                            // Seleciona a primeira estação por padrão
-                            if (EstacoesDisponiveis.Count > 0)
-                                EstacaoSelecionada = EstacoesDisponiveis[0];
+                            EstacoesDisponiveis.Add(est);
                         }
-                    });
-                }
+
+                        // Seleciona a primeira estação e já busca os dados
+                        EstacaoSelecionada = EstacoesDisponiveis[0];
+                    }
+                });
             }
-            catch (Exception ex) { Console.WriteLine($"Erro ao carregar estações: {ex.Message}"); }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERRO AO CARREGAR ESTAÇÕES: {ex.Message}");
+            }
         }
 
-        private async Task IniciarAtualizacaoAutomatica()
+        private void IniciarAtualizacaoAutomatica()
         {
-            while (true)
+            if (Application.Current?.Dispatcher == null) return;
+
+            _timer = Application.Current.Dispatcher.CreateTimer();
+            _timer.Interval = TimeSpan.FromSeconds(5);
+            _timer.Tick += async (s, e) =>
             {
-                await Task.Delay(5000);
-                await BuscarDados();
-            }
+                // PROTEÇÃO: Só tenta buscar se houver uma estação selecionada
+                if (EstacaoSelecionada != null)
+                {
+                    await BuscarDados();
+                }
+            };
+            _timer.Start();
         }
 
         public async Task BuscarDados()
@@ -128,23 +165,43 @@ namespace SigaM.app.ViewModels
             try
             {
                 using var client = new HttpClient();
-                var response = await client.GetStringAsync(_apiDadosBase + EstacaoSelecionada.Id);
-                dynamic? json = JsonConvert.DeserializeObject(response);
+                client.Timeout = TimeSpan.FromSeconds(5);
 
-                if (json != null && json.leitura != null)
+                var url = $"{_apiDadosBase}{EstacaoSelecionada.Id}&t={DateTime.Now.Ticks}";
+                var response = await client.GetStringAsync(url);
+
+                // Configuração que permite ler números que vieram como string do PHP
+                var options = new JsonSerializerOptions
                 {
-                    var novaLeitura = JsonConvert.DeserializeObject<Leitura>(json.leitura.ToString());
-                    MainThread.BeginInvokeOnMainThread(() => { LeituraAtual = novaLeitura; });
+                    PropertyNameCaseInsensitive = true,
+                    NumberHandling = JsonNumberHandling.AllowReadingFromString
+                };
+
+                var json = JsonSerializer.Deserialize<DadosResponse>(response, options);
+
+                if (json != null && json.Leitura != null)
+                {
+                    // Correção do erro CS0120: Usando MainThread para atualizar a tela
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        LeituraAtual = json.Leitura;
+                    });
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("JSON veio, mas a propriedade 'Leitura' está nula.");
                 }
             }
-            catch (Exception ex) { Console.WriteLine($"Erro ao buscar dados: {ex.Message}"); }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ERRO AO BUSCAR DADOS: {ex.Message}");
+            }
         }
 
         private async Task AlternarArmamento()
         {
             if (EstacaoSelecionada == null || LeituraAtual == null) return;
 
-            // Bloqueia a ação se o ESP32 estiver offline
             if (!EstaOnline)
             {
                 await Application.Current!.Windows[0].Page!.DisplayAlert(
@@ -157,7 +214,6 @@ namespace SigaM.app.ViewModels
             string comando = LeituraAtual.SistemaArmado == 1 ? "desarmar" : "armar";
             string acao = comando == "armar" ? "ARMAR" : "DESARMAR";
 
-            // 1. Pede confirmação
             bool confirm = await Application.Current!.Windows[0].Page!.DisplayAlert(
                 "Confirmação",
                 $"Tem certeza que deseja {acao} o sistema em {EstacaoSelecionada.Localidade}?",
@@ -167,34 +223,57 @@ namespace SigaM.app.ViewModels
 
             try
             {
-                // 2. Envia o comando para o PHP
                 var dados = new
                 {
                     estacao_id = EstacaoSelecionada.Id,
                     comando = comando,
-                    usuario_id = Globals.UsuarioId // Pega o ID de quem está logado
+                    usuario_id = Globals.UsuarioId
                 };
 
-                var content = new StringContent(JsonConvert.SerializeObject(dados), Encoding.UTF8, "application/json");
+                var content = new StringContent(JsonSerializer.Serialize(dados), Encoding.UTF8, "application/json");
                 using var client = new HttpClient();
 
                 var response = await client.PostAsync(_apiEnviarComando, content);
                 var responseBody = await response.Content.ReadAsStringAsync();
-                dynamic? json = JsonConvert.DeserializeObject(responseBody);
 
-                if (json != null && json.status == "sucesso")
+                var json = JsonSerializer.Deserialize<ComandoResponse>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (response.IsSuccessStatusCode && json?.Status == "sucesso")
                 {
-                    await Application.Current!.Windows[0].Page!.DisplayAlert("Sucesso", $"Comando {acao} enviado com sucesso!", "OK");
+                    await Application.Current!.Windows[0].Page!.DisplayAlert("Sucesso", $"Comando {acao} enfileirado! O ESP32 irá executá-lo em instantes.", "OK");
                 }
                 else
                 {
-                    await Application.Current!.Windows[0].Page!.DisplayAlert("Aviso", json?.mensagem ?? "Falha ao enviar comando.", "OK");
+                    await Application.Current!.Windows[0].Page!.DisplayAlert("Aviso", json?.Mensagem ?? "Falha ao enviar comando.", "OK");
                 }
             }
             catch (Exception ex)
             {
-                await Application.Current!.Windows[0].Page!.DisplayAlert("Erro", "Falha na conexão com o servidor: " + ex.Message, "OK");
+                await Application.Current!.Windows[0].Page!.DisplayAlert("Erro", "Falha na conexão: " + ex.Message, "OK");
             }
+        }
+
+        // ============================================================
+        // CLASSES AUXILIARES PARA LEITURA DO JSON
+        // ============================================================
+        private class EstacoesResponse
+        {
+            [JsonPropertyName("estacoes")]
+            public List<Estacao>? Estacoes { get; set; }
+        }
+
+        private class DadosResponse
+        {
+            [JsonPropertyName("leitura")]
+            public Leitura? Leitura { get; set; }
+        }
+
+        private class ComandoResponse
+        {
+            [JsonPropertyName("status")]
+            public string? Status { get; set; }
+            [JsonPropertyName("mensagem")]
+            public string? Mensagem { get; set; }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

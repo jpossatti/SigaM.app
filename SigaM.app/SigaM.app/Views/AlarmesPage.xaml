@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SigaM.app.ViewModels"
              x:Class="SigaM.app.Views.AlarmesPage"
              Title="Alarmes"
              BackgroundColor="#f4f6f9">
+
+    <ContentPage.BindingContext>
+        <vm:AlarmesViewModel />
+    </ContentPage.BindingContext>
 
     <Grid RowDefinitions="Auto,Auto,*">
 
@@ -11,14 +16,12 @@
         <Border Grid.Row="0" BackgroundColor="White" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15" Margin="15,15,15,5">
             <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="10">
 
-                <!-- Datas -->
                 <Label Grid.Row="0" Grid.Column="0" Text="Data Início" FontSize="11" TextColor="Gray"/>
                 <Label Grid.Row="0" Grid.Column="1" Text="Data Fim" FontSize="11" TextColor="Gray"/>
 
                 <Entry Grid.Row="1" Grid.Column="0" Text="{Binding DataInicio}" BackgroundColor="#f0f2f5" TextColor="#333" Placeholder="AAAA-MM-DD"/>
                 <Entry Grid.Row="1" Grid.Column="1" Text="{Binding DataFim}" BackgroundColor="#f0f2f5" TextColor="#333" Placeholder="AAAA-MM-DD"/>
 
-                <!-- Localidade -->
                 <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="Localidade" FontSize="11" TextColor="Gray" Margin="0,5,0,0"/>
 
                 <Picker Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" 
@@ -28,18 +31,13 @@
                         BackgroundColor="#f0f2f5" 
                         TextColor="#333"/>
 
-                <!-- Tipo de Alarme -->
                 <Label Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="Tipo de Alarme" FontSize="11" TextColor="Gray" Margin="0,5,0,0"/>
 
                 <Picker Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" 
                         ItemsSource="{Binding TiposDisponiveis}" 
                         SelectedItem="{Binding TipoSelecionado}"
                         BackgroundColor="#f0f2f5" 
-                        TextColor="#333">
-                    <Picker.ItemDisplayBinding>
-                        <Binding Path="." />
-                    </Picker.ItemDisplayBinding>
-                </Picker>
+                        TextColor="#333"/>
 
             </Grid>
         </Border>
@@ -58,20 +56,27 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border StrokeShape="RoundRectangle 10" StrokeThickness="0" BackgroundColor="White" Margin="0,0,0,10">
-                        <VerticalStackLayout Padding="15" Spacing="4">
+                        <Grid ColumnDefinitions="5,*" ColumnSpacing="10">
 
-                            <Grid ColumnDefinitions="*,Auto">
-                                <Label Text="{Binding Localidade}" FontAttributes="Bold" FontSize="16" TextColor="#333" VerticalOptions="Center"/>
-                                <Label Grid.Column="1" Text="{Binding Prioridade}" TextColor="{Binding CorPrioridade}" FontAttributes="Bold" VerticalOptions="Center"/>
-                            </Grid>
+                            <!-- Barra colorida lateral -->
+                            <BoxView Color="{Binding CorPrioridade}" WidthRequest="5" />
 
-                            <Label Text="{Binding TipoAlerta}" FontSize="12" TextColor="#1a73e8" FontAttributes="Bold" Margin="0,2,0,2"/>
-                            <Label Text="{Binding Mensagem}" FontSize="14" TextColor="#666" />
-                            <Label Text="{Binding DataCriacao}" FontSize="11" TextColor="#999" HorizontalOptions="End" Margin="0,4,0,0"/>
-                        </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Padding="15,10" Spacing="4">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding Localidade}" FontAttributes="Bold" FontSize="16" TextColor="#333" VerticalOptions="Center"/>
+                                    <Label Grid.Column="1" Text="{Binding TextoPrioridade}" TextColor="{Binding CorPrioridade}" FontAttributes="Bold" VerticalOptions="Center"/>
+                                </Grid>
+                                <Label Text="{Binding TipoAlerta}" FontSize="12" TextColor="#1a73e8" FontAttributes="Bold" Margin="0,2,0,2"/>
+                                <Label Text="{Binding Mensagem}" FontSize="14" TextColor="#666" />
+                                <Label Text="{Binding DataFormatada}" FontSize="11" TextColor="#999" HorizontalOptions="End" Margin="0,4,0,0"/>
+                            </VerticalStackLayout>
+                        </Grid>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <Label Text="Nenhum alarme encontrado." HorizontalOptions="Center" VerticalOptions="Center" TextColor="#999"/>
+            </CollectionView.EmptyView>
         </CollectionView>
     </Grid>
 </ContentPage>

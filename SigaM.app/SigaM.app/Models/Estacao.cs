@@ -1,52 +1,61 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace SigaM.app.Models
 {
     public class Estacao
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonProperty("localidade_id")]
+        [JsonPropertyName("localidade_id")]
         public int LocalidadeId { get; set; }
 
-        [JsonProperty("localidade")]
-        public string? Localidade { get; set; }
+        [JsonPropertyName("localidade")]
+        public string Localidade { get; set; } = string.Empty;
 
-        [JsonProperty("cidade")]
-        public string? Cidade { get; set; }
+        [JsonPropertyName("cidade")]
+        public string Cidade { get; set; } = string.Empty;
 
-        [JsonProperty("estado")]
-        public string? Estado { get; set; }
+        [JsonPropertyName("estado")]
+        public string Estado { get; set; } = string.Empty;
 
-        [JsonProperty("ip_gerenciamento")]
+        [JsonPropertyName("ip_gerenciamento")]
         public string? IpGerenciamento { get; set; }
 
-        [JsonProperty("ip_local_atual")]
+        [JsonPropertyName("ip_local_atual")]
         public string? IpLocalAtual { get; set; }
 
-        [JsonProperty("versao_firmware")]
+        [JsonPropertyName("versao_firmware")]
         public string? VersaoFirmware { get; set; }
 
-        [JsonProperty("ultima_conexao")]
+        [JsonPropertyName("ultima_conexao")]
         public string? UltimaConexao { get; set; }
 
-        [JsonProperty("observacao")]
+        [JsonPropertyName("observacao")]
         public string? Observacao { get; set; }
 
-        // ==========================================
-        // PROPRIEDADES CALCULADAS PARA A TELA
-        // ==========================================
-
+        [JsonIgnore]
         public string CidadeEstado => $"{Cidade} - {Estado}";
 
-        public string TextoIp => string.IsNullOrEmpty(IpLocalAtual) ? "Offline" : $"Conectado ({IpLocalAtual})";
+        [JsonIgnore]
+        public string TextoIp => string.IsNullOrEmpty(IpLocalAtual) ? "📡 Offline (Aguardando ESP32)" : $"📡 Conectado: {IpLocalAtual}";
 
-        public string TextoVersao => string.IsNullOrEmpty(VersaoFirmware) ? "Sem versão" : $"Versão: {VersaoFirmware}";
+        [JsonIgnore]
+        public string TextoVersao => string.IsNullOrEmpty(VersaoFirmware) ? "" : $"Versão Firmware: {VersaoFirmware}";
 
-        public string TextoData => string.IsNullOrEmpty(UltimaConexao) ? "Nunca conectado" : $"Últ. Contato: {UltimaConexao}";
+        [JsonIgnore]
+        public string TextoData
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(UltimaConexao)) return "Nunca conectado";
+                if (DateTime.TryParse(UltimaConexao, out DateTime dt))
+                    return $"Visto por último: {dt:dd/MM/yyyy HH:mm}";
+                return UltimaConexao;
+            }
+        }
 
-        // REGRA DE NEGÓCIO: Só permite editar se o IP estiver preenchido (ESP32 online)
-        public bool PodeEditarEstacao => !string.IsNullOrEmpty(IpLocalAtual);
+        [JsonIgnore]
+        public bool PodeEditarEstacao => true;
     }
 }

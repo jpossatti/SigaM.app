@@ -1,29 +1,50 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
+using Microsoft.Maui.Graphics;
 
 namespace SigaM.app.Models
 {
     public class Alarme
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonProperty("data_criacao")]
-        public string? DataCriacao { get; set; }
+        [JsonPropertyName("data_criacao")]
+        public string DataCriacaoStr { get; set; } = string.Empty;
 
-        [JsonProperty("localidade")]
-        public string? Localidade { get; set; }
+        [JsonPropertyName("localidade")]
+        public string Localidade { get; set; } = string.Empty;
 
-        [JsonProperty("tipo_alerta")]
-        public string? TipoAlerta { get; set; }
+        [JsonPropertyName("tipo_alerta")]
+        public string TipoAlerta { get; set; } = string.Empty;
 
-        [JsonProperty("mensagem")]
-        public string? Mensagem { get; set; }
+        [JsonPropertyName("mensagem")]
+        public string Mensagem { get; set; } = string.Empty;
 
-        [JsonProperty("prioridade")]
-        public string? Prioridade { get; set; }
+        [JsonPropertyName("prioridade")]
+        public string Prioridade { get; set; } = string.Empty;
 
-        // Cores para a interface
-        public Color CorPrioridade => Prioridade?.ToLower() == "critica" ? Colors.Red :
-                                     (Prioridade?.ToLower() == "alta" ? Colors.Orange : Colors.Gray);
+        // Propriedades calculadas para a Interface
+        [JsonIgnore]
+        public Color CorPrioridade => Prioridade.ToLower() switch
+        {
+            "critica" => Color.FromArgb("#dc3545"),
+            "alta" => Color.FromArgb("#fd7e14"),
+            "media" => Color.FromArgb("#ffc107"),
+            _ => Color.FromArgb("#28a745")
+        };
+
+        [JsonIgnore]
+        public string TextoPrioridade => Prioridade.ToUpper();
+
+        [JsonIgnore]
+        public string DataFormatada
+        {
+            get
+            {
+                if (DateTime.TryParse(DataCriacaoStr, out DateTime dt))
+                    return dt.ToString("dd/MM/yyyy HH:mm");
+                return DataCriacaoStr;
+            }
+        }
     }
 }

@@ -1,16 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace SigaM.app.Models
 {
     public class Localidade
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
-        [JsonProperty("nome")]
+        [JsonPropertyName("nome")]
         public string? Nome { get; set; }
 
-        [JsonProperty("cidade")]
+        [JsonPropertyName("cidade")]
         public string? Cidade { get; set; }
     }
 }

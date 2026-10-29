@@ -1,134 +1,139 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
+using System.Text.Json;
 using SigaM.app.Models;
-using Newtonsoft.Json;
-using Microsoft.Maui.ApplicationModel;
 
 namespace SigaM.app.ViewModels
 {
     public class AlarmesViewModel : INotifyPropertyChanged
     {
-        private readonly string _apiAlarmesBase = "http://localhost:3000/modules/sigam/api_alarmes.php";
-        private readonly string _apiEstacoes = "http://localhost:3000/modules/sigam/api_estacoes.php";
+        private static readonly HttpClient _client = new HttpClient();
+        private readonly string _apiUrl = "http://193.168.1.71:3000/modules/sigam/api_alarmes.php";
+        private readonly string _apiEstacoesUrl = "http://193.168.1.71:3000/modules/sigam/api_estacoes.php";
 
-        // Listas
         public ObservableCollection<Alarme> Alarmes { get; set; } = new();
-        public ObservableCollection<Estacao> EstacoesDisponiveis { get; set; } = new();
+        public ObservableCollection<EstacaoFiltro> EstacoesDisponiveis { get; set; } = new();
+        public ObservableCollection<string> TiposDisponiveis { get; set; } = new() { "todos", "portas", "rede", "gerador", "bateria" };
 
-        // Filtros
-        private string _dataInicio = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
-        public string DataInicio
+        public EstacaoFiltro? EstacaoSelecionada { get; set; }
+        public string TipoSelecionado { get; set; } = "todos";
+
+        public string DataInicio { get; set; } = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
+        public string DataFim { get; set; } = DateTime.Now.ToString("yyyy-MM-dd");
+
+        private bool _isBusy;
+        public bool IsBusy
         {
-            get => _dataInicio;
-            set { _dataInicio = value; OnPropertyChanged(); }
+            get => _isBusy;
+            set { _isBusy = value; OnPropertyChanged(); }
         }
 
-        private string _dataFim = DateTime.Now.ToString("yyyy-MM-dd");
-        public string DataFim
-        {
-            get => _dataFim;
-            set { _dataFim = value; OnPropertyChanged(); }
-        }
-
-        public List<string> TiposDisponiveis { get; } = new() { "todos", "portas", "rede", "gerador", "bateria" };
-        private string _tipoSelecionado = "todos";
-        public string TipoSelecionado
-        {
-            get => _tipoSelecionado;
-            set { _tipoSelecionado = value; OnPropertyChanged(); }
-        }
-
-        private Estacao? _estacaoSelecionada;
-        public Estacao? EstacaoSelecionada
-        {
-            get => _estacaoSelecionada;
-            set { _estacaoSelecionada = value; OnPropertyChanged(); }
-        }
-
-        public Command CarregarAlarmesCommand { get; }
+        public ICommand CarregarAlarmesCommand { get; }
 
         public AlarmesViewModel()
         {
-            CarregarAlarmesCommand = new Command(async () => await CarregarAlarmes());
-            _ = Inicializar();
+            CarregarAlarmesCommand = new Command(async () => await CarregarDados());
+            Task.Run(async () => await CarregarEstacoes());
         }
 
-        private async Task Inicializar()
+        public async Task CarregarDados()
         {
-            await CarregarEstacoes();
-            await CarregarAlarmes();
+            if (IsBusy) return;
+
+            try
+            {
+                IsBusy = true;
+                MainThread.BeginInvokeOnMainThread(() => Alarmes.Clear());
+
+                string url = $"{_apiUrl}?data_inicio={DataInicio}&data_fim={DataFim}&tipo={TipoSelecionado}";
+                if (EstacaoSelecionada != null && EstacaoSelecionada.Id > 0)
+                {
+                    url += $"&estacao_id={EstacaoSelecionada.Id}";
+                }
+
+                var response = await _client.GetAsync(url);
+                var json = await response.Content.ReadAsStringAsync();
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString
+                };
+
+                var resultado = JsonSerializer.Deserialize<ApiResponse>(json, options);
+
+                if (resultado?.Alarmes != null && resultado.Alarmes.Count > 0)
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        foreach (var item in resultado.Alarmes)
+                            Alarmes.Add(item);
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Erro de Leitura", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task CarregarEstacoes()
         {
             try
             {
-                using var client = new HttpClient();
-                var response = await client.GetStringAsync(_apiEstacoes);
-                dynamic? json = JsonConvert.DeserializeObject(response);
+                var response = await _client.GetAsync(_apiEstacoesUrl);
+                var json = await response.Content.ReadAsStringAsync();
 
-                if (json != null && json.estacoes != null)
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var resultado = JsonSerializer.Deserialize<EstacoesResponse>(json, options);
+
+                if (resultado?.Estacoes != null)
                 {
-                    var lista = JsonConvert.DeserializeObject<List<Estacao>>(json.estacoes.ToString());
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
                         EstacoesDisponiveis.Clear();
-                        if (lista != null)
+                        EstacoesDisponiveis.Add(new EstacaoFiltro { Id = 0, Localidade = "Todas as Localidades" });
+                        foreach (var est in resultado.Estacoes)
                         {
-                            // Adiciona uma opção "Todas" (ID 0) no topo da lista
-                            EstacoesDisponiveis.Add(new Estacao { Id = 0, Localidade = "Todas as Localidades" });
-
-                            foreach (var est in lista) EstacoesDisponiveis.Add(est);
-
-                            // Seleciona "Todas" por padrão
-                            EstacaoSelecionada = EstacoesDisponiveis[0];
+                            EstacoesDisponiveis.Add(new EstacaoFiltro { Id = est.Id, Localidade = est.Localidade });
                         }
                     });
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro ao carregar estações: {ex.Message}");
-            }
+            catch { }
         }
 
-        public async Task CarregarAlarmes()
+        private class ApiResponse
         {
-            try
-            {
-                using var client = new HttpClient();
+            [System.Text.Json.Serialization.JsonPropertyName("alarmes")]
+            public List<Alarme>? Alarmes { get; set; }
+        }
 
-                // Pega o ID da estação. Se for 0, manda vazio para trazer todas
-                string idParam = (EstacaoSelecionada != null && EstacaoSelecionada.Id > 0) ? EstacaoSelecionada.Id.ToString() : "";
-
-                // Monta a URL com os parâmetros
-                string url = $"{_apiAlarmesBase}?data_inicio={DataInicio}&data_fim={DataFim}&tipo={TipoSelecionado}&estacao_id={idParam}";
-
-                var response = await client.GetStringAsync(url);
-                dynamic? json = JsonConvert.DeserializeObject(response);
-
-                if (json != null && json.alarmes != null)
-                {
-                    var lista = JsonConvert.DeserializeObject<List<Alarme>>(json.alarmes.ToString());
-
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        Alarmes.Clear();
-                        if (lista != null)
-                        {
-                            foreach (var item in lista) Alarmes.Add(item);
-                        }
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro: {ex.Message}");
-            }
+        private class EstacoesResponse
+        {
+            [System.Text.Json.Serialization.JsonPropertyName("estacoes")]
+            public List<EstacaoFiltro>? Estacoes { get; set; }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class EstacaoFiltro
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("localidade")]
+        public string Localidade { get; set; } = string.Empty;
     }
 }
