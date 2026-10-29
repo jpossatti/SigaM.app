@@ -1,21 +1,21 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Dev\\Teste para MO\\SigaM.app\\SigaM.app\\",
+  "WorkspaceRootPath": "D:\\Dev\\SigaM.app\\SigaM.app\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\teste para mo\\sigam.app\\sigam.app\\sigam.app\\viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\viewmodels\\dashboardviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\teste para mo\\sigam.app\\sigam.app\\sigam.app\\models\\leitura.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\models\\leitura.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\models\\leitura.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\teste para mo\\sigam.app\\sigam.app\\sigam.app\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\mainpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\teste para mo\\sigam.app\\sigam.app\\sigam.app\\mainpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "AbsoluteMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|d:\\dev\\sigam.app\\sigam.app\\sigam.app\\mainpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{AD66BB04-0312-FCEF-D06E-4427E8D641E6}|SigaM.app\\SigaM.app.csproj|solutionrelative:sigam.app\\mainpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
@@ -48,24 +48,23 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Leitura.cs",
-              "DocumentMoniker": "D:\\Dev\\Teste para MO\\SigaM.app\\SigaM.app\\SigaM.app\\Models\\Leitura.cs",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Models\\Leitura.cs",
               "RelativeDocumentMoniker": "SigaM.app\\Models\\Leitura.cs",
-              "ToolTip": "D:\\Dev\\Teste para MO\\SigaM.app\\SigaM.app\\SigaM.app\\Models\\Leitura.cs",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\Models\\Leitura.cs",
               "RelativeToolTip": "SigaM.app\\Models\\Leitura.cs",
               "ViewState": "AgIAAEgAAAAAAAAAAAAgwFoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-29T12:28:03.914Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-29T12:28:03.914Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "DashboardViewModel.cs",
-              "DocumentMoniker": "D:\\Dev\\Teste para MO\\SigaM.app\\SigaM.app\\SigaM.app\\ViewModels\\DashboardViewModel.cs",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\ViewModels\\DashboardViewModel.cs",
               "RelativeDocumentMoniker": "SigaM.app\\ViewModels\\DashboardViewModel.cs",
-              "ToolTip": "D:\\Dev\\Teste para MO\\SigaM.app\\SigaM.app\\SigaM.app\\ViewModels\\DashboardViewModel.cs",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\ViewModels\\DashboardViewModel.cs",
               "RelativeToolTip": "SigaM.app\\ViewModels\\DashboardViewModel.cs",
-              "ViewState": "AgIAAMAAAAAAAAAAAAAAwMYAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAMEAAAAAAAAAAAAIwMYAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-29T12:21:34.51Z",
               "EditorCaption": ""
@@ -74,27 +73,25 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "MainPage.xaml.cs",
-              "DocumentMoniker": "D:\\Dev\\Teste para MO\\SigaM.app\\SigaM.app\\SigaM.app\\MainPage.xaml.cs",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\MainPage.xaml.cs",
               "RelativeDocumentMoniker": "SigaM.app\\MainPage.xaml.cs",
-              "ToolTip": "D:\\Dev\\Teste para MO\\SigaM.app\\SigaM.app\\SigaM.app\\MainPage.xaml.cs",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\MainPage.xaml.cs",
               "RelativeToolTip": "SigaM.app\\MainPage.xaml.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-29T12:18:51.278Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-29T12:18:51.278Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "MainPage.xaml",
-              "DocumentMoniker": "D:\\Dev\\Teste para MO\\SigaM.app\\SigaM.app\\SigaM.app\\MainPage.xaml",
+              "DocumentMoniker": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\MainPage.xaml",
               "RelativeDocumentMoniker": "SigaM.app\\MainPage.xaml",
-              "ToolTip": "D:\\Dev\\Teste para MO\\SigaM.app\\SigaM.app\\SigaM.app\\MainPage.xaml",
+              "ToolTip": "D:\\Dev\\SigaM.app\\SigaM.app\\SigaM.app\\MainPage.xaml",
               "RelativeToolTip": "SigaM.app\\MainPage.xaml",
               "ViewState": "AgIAAFAAAAAAAAAAAAAgwGIAAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-10-29T12:18:10.417Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-29T12:18:10.417Z"
             }
           ]
         }
