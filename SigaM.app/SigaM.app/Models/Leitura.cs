@@ -87,5 +87,27 @@ namespace SigaM.app.Models
 
         [JsonIgnore]
         public Color CorArmado => SistemaArmado == 1 ? Colors.Green : Colors.Gray;
+        [JsonIgnore]
+        public bool AlarmeViolado => AlarmeAtivo == 1;
+
+        [JsonIgnore]
+        public string TextoStatusSeguranca
+        {
+            get
+            {
+                if (AlarmeViolado) return "🚨 ALARME DISPARADO";
+                return SistemaArmado == 1 ? "🔒 SISTEMA ARMADO" : "🔓 SISTEMA DESARMADO";
+            }
+        }
+
+        [JsonIgnore]
+        public Color CorStatusSeguranca
+        {
+            get
+            {
+                if (AlarmeViolado) return Colors.Red; // Vermelho forte
+                return SistemaArmado == 1 ? Colors.Green : Colors.Gray;
+            }
+        }
     }
 }

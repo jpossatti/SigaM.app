@@ -66,14 +66,21 @@ namespace SigaM.app.ViewModels
                     OnPropertyChanged(nameof(LeituraAtual.PortaSalaBateriasStatus));
                     OnPropertyChanged(nameof(LeituraAtual.PortaBanheiroStatus));
                     OnPropertyChanged(nameof(LeituraAtual.SistemaArmado));
+
+                    // Antigas propriedades de armamento
                     OnPropertyChanged(nameof(LeituraAtual.TextoArmado));
+                    OnPropertyChanged(nameof(LeituraAtual.CorArmado));
+
+                    // NOVAS PROPRIEDADES DO ALARME VIOLADO
+                    OnPropertyChanged(nameof(LeituraAtual.TextoStatusSeguranca));
+                    OnPropertyChanged(nameof(LeituraAtual.CorStatusSeguranca));
+
                     OnPropertyChanged(nameof(LeituraAtual.TextoPrincipal));
                     OnPropertyChanged(nameof(LeituraAtual.TextoGerador));
                     OnPropertyChanged(nameof(LeituraAtual.TextoSalaBaterias));
                     OnPropertyChanged(nameof(LeituraAtual.TextoBanheiro));
                     OnPropertyChanged(nameof(LeituraAtual.CorRede));
                     OnPropertyChanged(nameof(LeituraAtual.CorBateria));
-                    OnPropertyChanged(nameof(LeituraAtual.CorArmado));
                     OnPropertyChanged(nameof(LeituraAtual.CorPrincipal));
                     OnPropertyChanged(nameof(LeituraAtual.CorGerador));
                     OnPropertyChanged(nameof(LeituraAtual.CorSalaBaterias));
